@@ -38,7 +38,14 @@
                     <li><a href="#education" class="nav-link">Education</a></li>
                     <li><a href="#projects" class="nav-link">Work</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li>
+                        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                            <span class="light-icon">🌙</span>
+                            <span class="dark-icon">☀️</span>
+                        </button>
+                    </li>
                 </ul>
+
             </div>
         </nav>
     </header>
@@ -72,6 +79,38 @@
                 <div class="mouse-icon"></div>
             </div>
         </section>
+
+        <!-- What I'm Doing Now Wrapper -->
+        <section id="now" class="section">
+            <div class="container">
+                <h2 class="section-title">Current Focus</h2>
+                <div class="now-grid">
+                    <div class="now-card">
+                        <div class="now-icon">🎯</div>
+                        <div class="now-info">
+                            <h4>Currently Learning</h4>
+                            <p>Refining expertise in Prompt Engineering and LLM Orchestration.</p>
+                        </div>
+                    </div>
+                    <div class="now-card">
+                        <div class="now-icon">✨</div>
+                        <div class="now-info">
+                            <h4>Current Pursuit</h4>
+                            <p>Exploring the intersection of Algorithmic Efficiency and Fashion Tech.</p>
+                        </div>
+                    </div>
+                    <div class="now-card">
+                        <div class="now-icon">💻</div>
+                        <div class="now-info">
+                            <h4>Development</h4>
+                            <p>Building scalable full-stack architectures with modern MERN patterns.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
 
         <!-- About Section -->
         <section id="about" class="section">
@@ -181,8 +220,29 @@
             </div>
         </section>
 
+        <!-- Coding Stats Dashboard -->
+        <section id="stats" class="section bg-warm">
+            <div class="container">
+                <h2 class="section-title">Coding Milestones</h2>
+                <p class="section-subtitle">Real-time metrics of my journey through algorithms and development.</p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="240">0</span>
+                        <span class="stat-label">Problems Solved</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="4">0</span>
+                        <span class="stat-label">Core Projects</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
         <!-- Projects Section -->
-        <section id="projects" class="section bg-dark text-light">
+        <section id="projects" class="section bg-dark text-light projects-section">
+            <div class="parallax-container"></div>
             <div class="container">
                 <h2 class="section-title text-light">Projects</h2>
                 <div class="projects-flex">
@@ -315,6 +375,25 @@
     </footer>
 
     <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
         // Parallax
         window.addEventListener('scroll', () => {
             const parallax = document.getElementById('parallax-bg');
@@ -323,6 +402,37 @@
                 parallax.style.transform = `translateY(${offset * 0.4}px)`;
             }
         });
+
+        // Animated Counters
+        const stats = document.querySelectorAll('.stat-number');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                    const target = parseInt(entry.target.getAttribute('data-target'));
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    const updateCount = (timestamp) => {
+                        const runtime = timestamp - startTime;
+                        const progress = Math.min(runtime / duration, 1);
+                        const count = Math.floor(progress * target);
+
+                        entry.target.innerText = count + (target >= 240 && entry.target.getAttribute('data-target') == '240' ? '+' : '');
+
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCount);
+                        } else {
+                            entry.target.innerText = target + (target >= 240 && entry.target.getAttribute('data-target') == '240' ? '+' : '');
+                            entry.target.classList.add('animated');
+                        }
+                    };
+
+                    requestAnimationFrame(updateCount);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        stats.forEach(stat => statsObserver.observe(stat));
 
         // Reveal
         const observer = new IntersectionObserver((entries) => {
@@ -351,6 +461,7 @@
             });
         });
     </script>
+
 </body>
 
 </html>
